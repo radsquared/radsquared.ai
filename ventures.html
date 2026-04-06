@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ventures — rad/s²</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { background:#1e2124; color:#fff; }
+    .site-nav { background:hsla(220,8%,14%,0.88); border-color:rgba(255,255,255,0.06); }
+    .nav-brand, .nav-link { color:rgba(255,255,255,0.55); }
+    .nav-link:hover, .nav-link.active { color:#fff; }
+    .nav-link::before { background:#fff; }
+    .page-header { border-color:rgba(255,255,255,0.1); }
+    .page-header .earmark { color:rgba(255,255,255,0.4); }
+    .page-header .lead { color:rgba(255,255,255,0.55); }
+    .ventures-list .venture-item { border-color:rgba(255,255,255,0.1); }
+    .venture-item:hover { background-color:rgba(255,255,255,0.03); }
+    .venture-num { color:rgba(255,255,255,0.3); }
+    .venture-desc { color:rgba(255,255,255,0.5); }
+    .topology-wrap { border-color:rgba(255,255,255,0.1); }
+    .site-footer { border-color:rgba(255,255,255,0.08); }
+    .footer-brand, .footer-links a { color:rgba(255,255,255,0.35); }
+  </style>
+</head>
+<body class="page-dark">
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <div class="page-wrap">
+    <main id="main">
+      <div class="container">
+
+        <header class="page-header">
+          <div class="earmark flicker">Engine Outputs</div>
+          <h1>Ventures</h1>
+          <p class="lead">Active ventures manufactured by the factory. Each is a module in the system topology — an output of the engine, not a portfolio tile.</p>
+        </header>
+
+        <!-- Topology diagram -->
+        <div class="topology-wrap" aria-hidden="true">
+          <svg viewBox="0 0 600 140" style="width:100%;min-width:440px;height:auto;" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrV" markerWidth="6" markerHeight="5" refX="5" refY="2.5" orient="auto">
+                <polygon points="0 0, 6 2.5, 0 5" fill="rgba(200,106,43,0.6)"/>
+              </marker>
+            </defs>
+            <!-- Engine -->
+            <circle cx="80" cy="70" r="32" fill="none" stroke="#C86A2B" stroke-width="1.5"/>
+            <text x="80" y="66" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" font-weight="600" fill="#C86A2B">rad/s²</text>
+            <text x="80" y="79" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" fill="rgba(255,255,255,0.35)">ENGINE</text>
+            <!-- Lines -->
+            <line x1="112" y1="55" x2="188" y2="22"  stroke="rgba(200,106,43,0.3)" stroke-width="1" marker-end="url(#arrV)"/>
+            <line x1="112" y1="63" x2="188" y2="48"  stroke="rgba(200,106,43,0.3)" stroke-width="1" marker-end="url(#arrV)"/>
+            <line x1="112" y1="70" x2="188" y2="74"  stroke="rgba(200,106,43,0.3)" stroke-width="1" marker-end="url(#arrV)"/>
+            <line x1="112" y1="78" x2="188" y2="100" stroke="rgba(200,106,43,0.3)" stroke-width="1" marker-end="url(#arrV)"/>
+            <line x1="112" y1="84" x2="188" y2="122" stroke="rgba(200,106,43,0.3)" stroke-width="1" marker-end="url(#arrV)"/>
+            <!-- Venture nodes -->
+            <circle cx="210" cy="22"  r="20" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <text x="210" y="19"  text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" font-weight="600" fill="#fff">HARVEST</text>
+            <circle cx="210" cy="48"  r="20" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <text x="210" y="45"  text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" font-weight="600" fill="#fff">PRISM</text>
+            <circle cx="210" cy="74"  r="20" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <text x="210" y="71"  text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" font-weight="600" fill="#fff">SWITCH</text>
+            <text x="210" y="81"  text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="7" fill="rgba(255,255,255,0.4)">BOARD</text>
+            <circle cx="210" cy="100" r="20" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <text x="210" y="97"  text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" font-weight="600" fill="#fff">FOUNDRY</text>
+            <circle cx="210" cy="122" r="14" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <text x="210" y="119" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="8" font-weight="600" fill="#fff">THRUST</text>
+          </svg>
+        </div>
+
+        <!-- Venture list -->
+        <div class="ventures-list">
+
+          <div class="venture-item">
+            <div class="venture-num">01</div>
+            <div class="venture-name">Harvest</div>
+            <p class="venture-desc">Decentralized trust infrastructure for organic agriculture. Farm-to-fork provenance built on cryptographic identity, P2P replication, and AI-driven supply/demand matching.</p>
+            <div class="venture-tags">
+              <span class="tag">AgriTech</span>
+              <span class="tag">Trust</span>
+              <span class="tag">P2P</span>
+            </div>
+          </div>
+
+          <div class="venture-item">
+            <div class="venture-num">02</div>
+            <div class="venture-name">Prism</div>
+            <p class="venture-desc">Research methodology as infrastructure. Platform for single-case experimental designs — N-of-1 effect sizes at scale.</p>
+            <div class="venture-tags">
+              <span class="tag">Research</span>
+              <span class="tag">N-of-1</span>
+            </div>
+          </div>
+
+          <div class="venture-item">
+            <div class="venture-num">03</div>
+            <div class="venture-name">Thrust</div>
+            <p class="venture-desc">Semantic compression engine and vertical SLM factory. Pipeline: Inlet → Compressor → Combustor → Turbine → Afterburner. The factory's R&amp;D engine.</p>
+            <div class="venture-tags">
+              <span class="tag">AI/ML</span>
+              <span class="tag">SLM</span>
+              <span class="tag">R&amp;D</span>
+            </div>
+          </div>
+
+          <div class="venture-item">
+            <div class="venture-num">04</div>
+            <div class="venture-name">Switchboard</div>
+            <p class="venture-desc">Back-office automation for Managed Service Providers. Transforming vCIO into vCAIO — AI-native client intelligence at scale.</p>
+            <div class="venture-tags">
+              <span class="tag">MSP</span>
+              <span class="tag">Automation</span>
+            </div>
+          </div>
+
+          <div class="venture-item">
+            <div class="venture-num">05</div>
+            <div class="venture-name">Foundry</div>
+            <p class="venture-desc">Local execution engine for the AI economy. A shared, continuously learning layer for entire local economies.</p>
+            <div class="venture-tags">
+              <span class="tag">Local AI</span>
+              <span class="tag">Infrastructure</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script type="module" src="app.mjs"></script>
+</body>
+</html>
