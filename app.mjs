@@ -1,49 +1,4 @@
-// rad/s² — App Shell (Kinetic Precision)
-
-// ── Font injection ──────────────────────────────────────────
-function injectFont() {
-  if (!document.querySelector('#space-grotesk-font')) {
-    const link = document.createElement('link');
-    link.id   = 'space-grotesk-font';
-    link.rel  = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap';
-    document.head.appendChild(link);
-  }
-  // Preconnects
-  ['https://fonts.googleapis.com', 'https://fonts.gstatic.com'].forEach(url => {
-    if (!document.querySelector(`link[href="${url}"]`)) {
-      const pc = document.createElement('link');
-      pc.rel = 'preconnect';
-      pc.href = url;
-      if (url.includes('gstatic')) pc.crossOrigin = 'anonymous';
-      document.head.prepend(pc);
-    }
-  });
-}
-
-// ── Background layers ───────────────────────────────────────
-function injectBackgroundLayers() {
-  if (!document.querySelector('.dot-grid')) {
-    const grid = document.createElement('div');
-    grid.className = 'dot-grid';
-    document.body.prepend(grid);
-  }
-  if (!document.querySelector('.film-grain')) {
-    const grain = document.createElement('div');
-    grain.className = 'film-grain';
-    document.body.prepend(grain);
-  }
-}
-
-// ── Live indicator ──────────────────────────────────────────
-function injectLiveIndicator() {
-  if (!document.querySelector('.live-indicator')) {
-    const el = document.createElement('div');
-    el.className = 'live-indicator';
-    el.innerHTML = '<span class="live-dot"></span>LIVE_TELEMETRY_FEED_ESTABLISHED';
-    document.body.appendChild(el);
-  }
-}
+// rad/s² — App Shell (Warm Editorial)
 
 // ── Nav ─────────────────────────────────────────────────────
 const NAV_ITEMS = [
@@ -65,7 +20,9 @@ function buildNav() {
   wrap.className = 'site-nav-wrap';
   wrap.innerHTML = `
     <nav class="site-nav" role="navigation" aria-label="Main navigation">
-      <a href="index.html" class="nav-brand">RAD/S²</a>
+      <a href="index.html" class="nav-brand">
+        <img src="assets/logo.png" alt="Rad/s²" class="nav-logo" />
+      </a>
       <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -145,12 +102,55 @@ function initScrollReveal() {
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
+// ── Scramble text reveal ─────────────────────────────────────
+function initScramble() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789·—/_²';
+
+  function scrambleEl(el) {
+    const original = el.textContent;
+    const len = original.length;
+    const FRAMES = 18; // ~300ms at 60fps
+    let frame = 0;
+
+    const tick = setInterval(() => {
+      let out = '';
+      for (let i = 0; i < len; i++) {
+        const ch = original[i];
+        if (ch === ' ' || ch === '\n') {
+          out += ch;
+        } else if (frame / FRAMES > i / len) {
+          out += ch; // character has resolved
+        } else {
+          out += CHARS[Math.floor(Math.random() * CHARS.length)];
+        }
+      }
+      el.textContent = out;
+      if (++frame > FRAMES) {
+        el.textContent = original;
+        clearInterval(tick);
+      }
+    }, 16);
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        scrambleEl(entry.target);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  // Auto-apply to section labels and earmarks across all pages
+  document.querySelectorAll('.section-label, .earmark').forEach(el => observer.observe(el));
+}
+
 // ── Init ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  injectFont();
-  injectBackgroundLayers();
   buildNav();
   buildFooter();
-  injectLiveIndicator();
   initScrollReveal();
+  initScramble();
 });

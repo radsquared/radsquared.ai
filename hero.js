@@ -1,4 +1,5 @@
-// rad/s² — Three.js gyroscope hero
+// rad/s² — Three.js gyroscope hero + particle wave
+
 import * as THREE from 'three';
 
 function makeRing(radius, opacity, segments = 128) {
@@ -9,35 +10,44 @@ function makeRing(radius, opacity, segments = 128) {
   }
   return new THREE.Line(
     new THREE.BufferGeometry().setFromPoints(pts),
-    new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity })
+    new THREE.LineBasicMaterial({ color: 0x1A1A1A, transparent: true, opacity })
   );
 }
 
 export function initHero(canvas) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-  camera.position.z = 4.5;
+  // Slightly elevated camera for floor grid perspective
+  camera.position.set(0, 0.6, 4.5);
+  camera.lookAt(0, -0.15, 0);
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
 
-  // — Gyroscope —
+  // — Perspective Grid Floor —
+  const grid = new THREE.GridHelper(8, 16, 0xBCB9B4, 0xD4D1CC);
+  const applyGridMat = (m) => { m.transparent = true; m.opacity = 0.18; };
+  Array.isArray(grid.material) ? grid.material.forEach(applyGridMat) : applyGridMat(grid.material);
+  grid.position.y = -2.0;
+  scene.add(grid);
+
+  // — Gyroscope — (opacities tuned for warm light background)
   const gyro = new THREE.Group();
 
-  const r1 = makeRing(1.40, 0.90); // XY plane
-  const r2 = makeRing(1.10, 0.75); // YZ plane
+  const r1 = makeRing(1.40, 0.70); // XY plane
+  const r2 = makeRing(1.10, 0.55); // YZ plane
   r2.rotation.y = Math.PI / 2;
-  const r3 = makeRing(0.80, 0.60); // XZ plane
+  const r3 = makeRing(0.80, 0.40); // XZ plane
   r3.rotation.x = Math.PI / 2;
-  const r4 = makeRing(0.50, 0.40); // diagonal
+  const r4 = makeRing(0.50, 0.28); // diagonal
   r4.rotation.x = Math.PI / 4;
   r4.rotation.z = Math.PI / 6;
 
   gyro.add(r1, r2, r3, r4);
 
   // Faint axle lines
-  const axleMat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.10 });
+  const axleMat = new THREE.LineBasicMaterial({ color: 0x1A1A1A, transparent: true, opacity: 0.08 });
   [
     [new THREE.Vector3(-1.7, 0, 0), new THREE.Vector3(1.7, 0, 0)],
     [new THREE.Vector3(0, -1.7, 0), new THREE.Vector3(0, 1.7, 0)],
@@ -48,7 +58,7 @@ export function initHero(canvas) {
 
   scene.add(gyro);
 
-  // — Particles —
+  // — Gyroscope Particles —
   const COUNT = 500;
   const positions = new Float32Array(COUNT * 3);
   const radii = [1.40, 1.10, 0.80, 0.50];
@@ -76,10 +86,10 @@ export function initHero(canvas) {
   const pGeo = new THREE.BufferGeometry();
   pGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
   const particles = new THREE.Points(pGeo, new THREE.PointsMaterial({
-    color: 0xffffff,
+    color: 0x1A1A1A,
     size: 0.022,
     transparent: true,
-    opacity: 0.45,
+    opacity: 0.30,
     sizeAttenuation: true,
   }));
   scene.add(particles);
@@ -121,5 +131,99 @@ export function initHero(canvas) {
     cancelAnimationFrame(raf);
     ro.disconnect();
     renderer.dispose();
+  };
+}
+
+// — Full-width particle dust wave (2D canvas, spans the whole hero) —
+export function initWave(canvas) {
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let phase = 0;
+  let W = 0, H = 0;
+  let waveOffset = 0, targetOffset = 0;
+  let raf;
+
+  // Box-Muller gaussian sample
+  function randNormal() {
+    let u, v;
+    do { u = Math.random(); } while (u === 0);
+    do { v = Math.random(); } while (v === 0);
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+
+  function buildParticles() {
+    particles = [];
+    // Scale particle count with canvas width, capped at 2800
+    const COUNT = Math.min(Math.floor(W * 1.6), 2800);
+    const cy = H * 0.58; // wave center at 58% down the hero
+
+    for (let i = 0; i < COUNT; i++) {
+      const x = Math.random() * W;
+      // Compound sine wave shape — two harmonics for organic feel
+      const nx = (x / W) * Math.PI * 3;
+      const wave = Math.sin(nx) * H * 0.055 + Math.sin(nx * 0.55 + 0.9) * H * 0.025;
+      // Gaussian scatter around the wave center line
+      const scatter = randNormal() * H * 0.026;
+
+      particles.push({
+        x,
+        baseY: cy + wave + scatter,
+        phase: Math.random() * Math.PI * 2, // per-particle phase offset
+        r: Math.random() * 1.0 + 0.35,
+        a: Math.random() * 0.16 + 0.04,     // alpha
+      });
+    }
+  }
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    W = Math.round(rect.width);
+    H = Math.round(rect.height);
+    const dpr = Math.min(devicePixelRatio, 2);
+    // Setting canvas.width resets the 2D context state (clears transforms)
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.scale(dpr, dpr);
+    buildParticles();
+  }
+
+  const ro = new ResizeObserver(resize);
+  ro.observe(canvas.parentElement);
+  resize();
+
+  // Subtle mouse reactivity — wave rises/falls with vertical cursor position
+  const heroEl = canvas.parentElement;
+  heroEl.addEventListener('mousemove', (e) => {
+    const rect = heroEl.getBoundingClientRect();
+    const my = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to +0.5
+    targetOffset = my * -H * 0.04;
+  });
+  heroEl.addEventListener('mouseleave', () => { targetOffset = 0; });
+
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function draw() {
+    if (prefersReduced) return;
+    raf = requestAnimationFrame(draw);
+    ctx.clearRect(0, 0, W, H);
+    phase += 0.0035;
+    waveOffset += (targetOffset - waveOffset) * 0.04; // lerp toward target
+
+    for (const p of particles) {
+      // Slow per-particle oscillation on top of global phase
+      const y = p.baseY + waveOffset + Math.sin(p.x * 0.0038 + phase + p.phase) * 5;
+      ctx.beginPath();
+      ctx.arc(p.x, y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(90,122,107,${p.a})`; // deep sage, warm
+      ctx.fill();
+    }
+  }
+  draw();
+
+  return () => {
+    cancelAnimationFrame(raf);
+    ro.disconnect();
   };
 }
