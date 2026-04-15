@@ -1,13 +1,12 @@
-// rad/s² — App Shell
+// rad/s² — App Shell (Warm Editorial)
 
+// ── Nav ─────────────────────────────────────────────────────
 const NAV_ITEMS = [
-  { label: 'Engine',        href: 'index.html' },
-  { label: 'Manifesto',     href: 'manifesto.html' },
-  { label: 'Framework',     href: 'roadmap.html' },
-  { label: 'Ventures',      href: 'ventures.html' },
-  { label: 'Team',          href: 'team.html' },
-  { label: 'Opportunities', href: 'opportunities.html' },
-  { label: 'System Access', href: 'contact.html' },
+  { label: 'LABS',      href: 'index.html' },
+  { label: 'THESIS',    href: 'manifesto.html' },
+  { label: 'VENTURES',  href: 'ventures.html' },
+  { label: 'TEAM',      href: 'team.html' },
+  { label: 'CONTACT',   href: 'contact.html' },
 ];
 
 function currentPage() {
@@ -21,7 +20,9 @@ function buildNav() {
   wrap.className = 'site-nav-wrap';
   wrap.innerHTML = `
     <nav class="site-nav" role="navigation" aria-label="Main navigation">
-      <a href="index.html" class="nav-brand">rad/s²</a>
+      <a href="index.html" class="nav-brand">
+        <img src="assets/logo.png" alt="Rad/s²" class="nav-logo" />
+      </a>
       <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -29,6 +30,7 @@ function buildNav() {
         ${NAV_ITEMS.map(item => `
           <li><a href="${item.href}" class="nav-link${cur === item.href ? ' active' : ''}">${item.label}</a></li>
         `).join('')}
+        <li><a href="contact.html" class="nav-cta">_INITIATE_PROJECT</a></li>
       </ul>
     </nav>`;
 
@@ -41,7 +43,6 @@ function buildNav() {
     toggle.setAttribute('aria-expanded', String(open));
   });
 
-  // Close on outside click
   document.addEventListener('click', (e) => {
     if (!wrap.contains(e.target) && links.classList.contains('open')) {
       links.classList.remove('open');
@@ -53,21 +54,103 @@ function buildNav() {
   document.body.prepend(wrap);
 }
 
+// ── Footer ──────────────────────────────────────────────────
 function buildFooter() {
   const footer = document.createElement('footer');
   footer.className = 'site-footer';
   footer.innerHTML = `
-    <div class="container footer-inner">
-      <span class="footer-brand">© ${new Date().getFullYear()} Radians per Second Squared, LLC</span>
-      <nav class="footer-links" aria-label="Footer navigation">
-        <a href="mailto:hello@radsquared.ai">hello@radsquared.ai</a>
-        <a href="legal.html">Privacy &amp; Terms</a>
-      </nav>
+    <div class="footer-inner">
+      <div class="footer-col">
+        <span class="footer-brand-name">RAD/S²</span>
+        <p class="footer-copy">©${new Date().getFullYear()} RADIANS PER<br>SECOND SQUARED, LLC.</p>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-label">Infrastructure</span>
+        <ul class="footer-links-list">
+          <li><a href="#">_SYSTEM_STATUS</a></li>
+          <li><a href="#">_CORE_LOGS</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-label">Governance</span>
+        <ul class="footer-links-list">
+          <li><a href="legal.html">_PRIVACY_POLICY</a></li>
+          <li><a href="legal.html">_LICENSE_AGREEMENT</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <span class="footer-col-label">Connect</span>
+        <ul class="footer-links-list">
+          <li><a href="mailto:hello@radsquared.ai">hello@radsquared.ai</a></li>
+        </ul>
+      </div>
     </div>`;
-  document.body.append(footer);
+  document.body.appendChild(footer);
 }
 
+// ── Scroll reveal ────────────────────────────────────────────
+function initScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+// ── Scramble text reveal ─────────────────────────────────────
+function initScramble() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789·—/_²';
+
+  function scrambleEl(el) {
+    const original = el.textContent;
+    const len = original.length;
+    const FRAMES = 18; // ~300ms at 60fps
+    let frame = 0;
+
+    const tick = setInterval(() => {
+      let out = '';
+      for (let i = 0; i < len; i++) {
+        const ch = original[i];
+        if (ch === ' ' || ch === '\n') {
+          out += ch;
+        } else if (frame / FRAMES > i / len) {
+          out += ch; // character has resolved
+        } else {
+          out += CHARS[Math.floor(Math.random() * CHARS.length)];
+        }
+      }
+      el.textContent = out;
+      if (++frame > FRAMES) {
+        el.textContent = original;
+        clearInterval(tick);
+      }
+    }, 16);
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        scrambleEl(entry.target);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+
+  // Auto-apply to section labels and earmarks across all pages
+  document.querySelectorAll('.section-label, .earmark').forEach(el => observer.observe(el));
+}
+
+// ── Init ─────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   buildNav();
   buildFooter();
+  initScrollReveal();
+  initScramble();
 });
