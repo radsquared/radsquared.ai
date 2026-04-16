@@ -574,6 +574,35 @@ body > .page-body {
   .word-reveal { opacity: 1; animation: none; }
 }
 
+/* ── Character morph (Greek/Cyrillic cipher → real letter) ── */
+.char-morph {
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+@keyframes char-resolve {
+  0%   { filter: blur(7px); opacity: 0.35; }
+  55%  { filter: blur(1px); opacity: 0.80; }
+  100% { filter: blur(0px); opacity: 1;    }
+}
+
+.char-morph.resolving {
+  animation: char-resolve 0.24s ease-out forwards;
+}
+
+/* Inner page titles — cipher state before JS resolves */
+.page-header-title .char-morph,
+.inner-page-title .char-morph {
+  opacity: 0.45;
+  filter: blur(3px);
+  transition: opacity 0.01s, filter 0.01s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .char-morph { opacity: 1 !important; filter: none !important; }
+  .char-morph.resolving { animation: none; }
+}
+
 /* Right: gyroscope canvas */
 .hero-visual {
   display: flex;

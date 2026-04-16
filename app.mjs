@@ -102,6 +102,57 @@ function initScrollReveal() {
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
+// ── Greek/Cyrillic cipher morph ──────────────────────────────
+const CIPHER = {
+  'A':'Α','B':'β','C':'С','D':'Ð','E':'Ε','F':'Ƒ','G':'Ɠ','H':'Η',
+  'I':'Ι','J':'ϳ','K':'Κ','L':'Λ','M':'Μ','N':'Ν','O':'Θ','P':'Ρ',
+  'Q':'Ω','R':'Я','S':'Ѕ','T':'Τ','U':'Υ','V':'Ѵ','W':'Ш','X':'Χ',
+  'Y':'Υ','Z':'Ζ',
+  'a':'α','b':'ƀ','c':'с','d':'δ','e':'є','f':'ƒ','g':'ɢ','h':'н',
+  'i':'ι','j':'ϳ','k':'κ','l':'ℓ','m':'м','n':'η','o':'σ','p':'ρ',
+  'q':'φ','r':'я','s':'ѕ','t':'т','u':'υ','v':'ν','w':'ω','x':'χ',
+  'y':'у','z':'ζ',
+};
+
+function buildCipherSpans(el) {
+  const text = el.textContent;
+  el.textContent = '';
+  for (const ch of text) {
+    const span = document.createElement('span');
+    span.className = 'char-morph';
+    span.dataset.real = ch;
+    span.textContent = CIPHER[ch] ?? ch;
+    el.appendChild(span);
+  }
+}
+
+function resolveChars(el, startMs, staggerMs) {
+  [...el.querySelectorAll('.char-morph')].forEach((span, i) => {
+    setTimeout(() => {
+      span.textContent = span.dataset.real;
+      span.classList.add('resolving');
+    }, startMs + i * staggerMs);
+  });
+}
+
+function initCharMorph() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  // Hero headline — scan beam reveals cipher chars, then they resolve per-word
+  // CSS delays: nth-child(1) 0.54s, (2) 1.20s, (3) 1.86s; each word 0.55s duration
+  const heroWordDelays = [540, 1200, 1860];
+  document.querySelectorAll('.hero-headline .word-reveal').forEach((word, i) => {
+    buildCipherSpans(word);
+    resolveChars(word, heroWordDelays[i] + 420, 50);
+  });
+
+  // Inner page h1s — cipher chars resolve shortly after page load
+  document.querySelectorAll('.page-header-title, .inner-page-title').forEach(title => {
+    buildCipherSpans(title);
+    resolveChars(title, 350, 32);
+  });
+}
+
 // ── Scramble text reveal ─────────────────────────────────────
 function initScramble() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -152,5 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
   buildNav();
   buildFooter();
   initScrollReveal();
+  initCharMorph();
   initScramble();
 });
