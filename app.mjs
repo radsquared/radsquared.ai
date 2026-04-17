@@ -30,7 +30,7 @@ function buildNav() {
         ${NAV_ITEMS.map(item => `
           <li><a href="${item.href}" class="nav-link${cur === item.href ? ' active' : ''}">${item.label}</a></li>
         `).join('')}
-        <li><a href="contact.html" class="nav-cta">_INITIATE_PROJECT</a></li>
+        <li><a href="contact.html" class="nav-cta">INITIATE PROJECT</a></li>
       </ul>
     </nav>`;
 
