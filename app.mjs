@@ -67,15 +67,15 @@ function buildFooter() {
       <div class="footer-col">
         <span class="footer-col-label">Infrastructure</span>
         <ul class="footer-links-list">
-          <li><a href="#">_SYSTEM_STATUS</a></li>
-          <li><a href="#">_CORE_LOGS</a></li>
+          <li><a href="#">SYSTEM STATUS</a></li>
+          <li><a href="#">CORE LOGS</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <span class="footer-col-label">Governance</span>
         <ul class="footer-links-list">
-          <li><a href="legal.html">_PRIVACY_POLICY</a></li>
-          <li><a href="legal.html">_LICENSE_AGREEMENT</a></li>
+          <li><a href="legal.html">PRIVACY POLICY</a></li>
+          <li><a href="legal.html">LICENSE AGREEMENT</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -149,7 +149,7 @@ function initCharMorph() {
   // Inner page h1s — cipher chars resolve shortly after page load
   document.querySelectorAll('.page-header-title, .inner-page-title').forEach(title => {
     buildCipherSpans(title);
-    resolveChars(title, 350, 32);
+    resolveChars(title, 350, 70);
   });
 }
 

@@ -460,7 +460,7 @@ body > .page-body {
 
 .hero-inner {
   display: grid;
-  grid-template-columns: 55% 45%;
+  grid-template-columns: 62% 38%;
   align-items: center;
   gap: 3rem;
   padding-top: 5rem;
@@ -486,7 +486,10 @@ body > .page-body {
   margin-bottom: 2rem;
   position: relative;
   overflow: hidden;
+  contain: layout paint;
 }
+
+.hero-headline .word-reveal { white-space: nowrap; }
 
 /* Scan beam — a 48px gradient element whose bottom edge IS the rule line.
    The gradient above it creates a luminous glow trail as it sweeps down.
@@ -581,9 +584,9 @@ body > .page-body {
 }
 
 @keyframes char-resolve {
-  0%   { filter: blur(7px); opacity: 0.35; }
-  55%  { filter: blur(1px); opacity: 0.80; }
-  100% { filter: blur(0px); opacity: 1;    }
+  0%   { opacity: 0.35; }
+  55%  { opacity: 0.80; }
+  100% { opacity: 1;    }
 }
 
 .char-morph.resolving {
@@ -618,6 +621,8 @@ body > .page-body {
   display: flex;
   align-items: center;
   justify-content: center;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 #gyro-canvas {
