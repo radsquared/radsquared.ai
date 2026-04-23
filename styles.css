@@ -597,8 +597,7 @@ body > .page-body {
 .page-header-title .char-morph,
 .inner-page-title .char-morph {
   opacity: 0.45;
-  filter: blur(3px);
-  transition: opacity 0.01s, filter 0.01s;
+  transition: opacity 0.01s;
 }
 
 @media (prefers-reduced-motion: reduce) {
